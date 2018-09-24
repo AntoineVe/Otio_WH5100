@@ -8,6 +8,7 @@ d'un dongle DVB-T de type RTL-2838
 __docformat__ = 'restructuredtext en'
 
 from datetime import datetime
+from time import sleep
 import subprocess
 import urllib.request
 import json
@@ -18,7 +19,7 @@ logging.basicConfig(
         format='[METEO] - %(asctime)s - %(message)s',
         datefmt='[%d/%m/%Y %H:%M:%S]')
 
-API_URL = "http://127.0.0.1:8088/api/meteo"
+API_URL = "http://127.0.0.1/api/meteo"
 RTL_SDR_FREQ = 868304625
 '''
 Il semble que l'état des piles modifié l'offset de la température
@@ -44,6 +45,10 @@ def getweather():
     linéaire sur une vingtaine de mesure.
     Pour le pluviomètre, il s'agit d'un compteur relatif ; la valeur est
     stockée pour pouvoir effectuer une différence avec la précédente.
+    Ensuite, pour afficher les mêmes valeurs que sur la station méto "officielle",
+    il faut utiliser la formule suivante :
+    0.3*(((np.sum(pluie)/2)*10)//3)
+    avec np.sum la somme des enregistrements sur une période donnée (1h, 24h, ...)
     '''
 
     timestamp = datetime.now().timestamp()
@@ -106,14 +111,30 @@ def getweather():
                 logging.error("Aucune donnée reçu !")
                 return None
             elif "Signal caught" in line:
+                ### Specifique à FreeBSD
+                ### TODO : adapter à GNU/Linux
                 logging.error("Erreur de communication !")
+#                p = subprocess.Popen(
+#                        ["sudo", "usbconfig"],
+#                        stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+#                stdout, stderr = p.communicate()
+#                ports = stdout.decode().splitlines()
+##                for port in ports:
+#                    if "Realtek" in port:
+#                        port_meteo = port.split()[0].split(':')[0]
+#                logging.info("Redémarrage de port USB... ({})".format(port_meteo))
+#                p = subprocess.Popen(
+#                        ["sudo", "usbconfig", "-d", port_meteo, "reset"],
+#                        stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+#                stdout, stderr = p.communicate()
+                sleep(10)
                 return None
         if frame:
             with open("/home/antoine/station_meteo.log", "a") as logfile:
                 logfile.write(str(frame) + "\n")
-            if -20 <= t <= 60 and 0 <= h <= 100 and r <= 10:
+            if -20 <= t <= 60 and 0 <= h <= 100 and r < 10:
                 donnees_meteo = {
-                    'date': float(timestamp),
+                    'timestamp': float(timestamp),
                     'temp': float(t),
                     'hum': int(h),
                     'wind': float(w_median),
