@@ -1,3 +1,5 @@
+**Projet archivé ! Mise à jour sur https://git.antoineve.me/AntoineVe/Otio_WH5100**
+
 # Otio WH5100
 Communication avec une station météo Otio WH5100
 
