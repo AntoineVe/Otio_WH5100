@@ -6,6 +6,6 @@ Communication avec une station météo Otio WH5100
  * rtl_433 : [merbanan/rtl_433](https://github.com/merbanan/rtl_433)
 
 # Lien
- * [Rétro-ingénierie d’une station météo](https://blog.antoineve.me/2017/07/30/ingenierie-inverse-station-meteo-otio/)
+ * [Rétro-ingénierie d’une station météo](https://wiki.antoineve.me/doku.php?id=articles:domotique:retro-ingenierie_d_une_station_meteo)
 
-![Capteurs de la station météo](https://nuage.van-elstraete.net/apps/gallery/s/BgXcmy8dbbybock)
+![Capteurs de la station météo](https://wiki.antoineve.me/lib/exe/fetch.php?media=domotique:station_meteo_header.jpg)
